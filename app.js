@@ -7,33 +7,57 @@
 	var players = [];
 	
 	io.on('connection', function(socket){
+		//create player obj
 		var clientId = shortId.generate();
-		players.push(clientId);
-		
-		console.log('client connected - broadcasting spawn - id: ' + clientId);
-		
-		socket.broadcast.emit('spawn', { id: clientId });
-
-		players.forEach(function(id){ 
-			if (id != clientId) {
-				socket.emit('spawn', { id: id});
-				console.log('sending spawn for new player for id: ' + id);
+		var player = {
+			id: clientId,
+			targetPosition: {
+				x: 0, y: 0, z: 0
 			}
-		});
+		};
+		players[clientId] = player;
+	
+		//------------------------------ spawn logic -------------------------------------
+		//emit spawn and request position to all other connected players
+		console.log('client connected - broadcasting spawn - id: ' + clientId);
+
+		socket.broadcast.emit('spawn', player);
+		socket.broadcast.emit('requestPosition');
 		
+		//emit spawn for each connected player
+		for (var playerId in players){
+			if (playerId != clientId) {
+				socket.emit('spawn', players[playerId]);
+				console.log('sending spawn for new player for id: ' + playerId);
+			}
+		}
+		
+		//---------------------------- event handlers ------------------------------------
 		socket.on('move', function(data){
 			data.id = clientId;
 			console.log('client moving to: ' + JSON.stringify(data));
 			
+			//update position
+			player.targetPosition.x = data.x;
+			player.targetPosition.y = data.y;
+			player.targetPosition.z = data.z;
+			
 			socket.broadcast.emit('move', data);
 		});
 		
+		socket.on('updatePosition', function(data){
+			data.id = clientId;
+			console.log('Update position :' + JSON.stringify(data));
+			
+			socket.broadcast.emit('updatePosition', data);
+		});
+		
+		//on player disconnect
 		socket.on('disconnect', function(){
-			if (players.indexOf != -1) {
-				console.log('client disconnected - id: ' + clientId);
-				socket.broadcast.emit('clientDisconnected', { id: clientId });
-				players.splice(players.indexOf(clientId), 1);
-			}
+			console.log('client disconnected - id: ' + clientId);
+			delete players[clientId];
+			
+			socket.broadcast.emit('clientDisconnected', { id: clientId });
 		});
 	});
 })();
