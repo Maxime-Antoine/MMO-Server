@@ -21,6 +21,7 @@
 		//emit spawn and request position to all other connected players
 		console.log('client connected - broadcasting spawn - id: ' + clientId);
 
+		socket.emit('register', { id: clientId});
 		socket.broadcast.emit('spawn', player);
 		socket.broadcast.emit('requestPosition');
 		
@@ -28,7 +29,7 @@
 		for (var playerId in players){
 			if (playerId != clientId) {
 				socket.emit('spawn', players[playerId]);
-				console.log('sending spawn for new player for id: ' + playerId);
+				console.log('sending spawn new player for id: ' + playerId);
 			}
 		}
 		
@@ -47,9 +48,16 @@
 		
 		socket.on('updatePosition', function(data){
 			data.id = clientId;
-			console.log('Update position :' + JSON.stringify(data));
+			console.log('Update position: ' + JSON.stringify(data));
 			
 			socket.broadcast.emit('updatePosition', data);
+		});
+		
+		socket.on('follow', function(data){
+			data.id = clientId;
+			console.log('Follow request: ' + JSON.stringify(data));
+			
+			socket.broadcast.emit('follow', data);
 		});
 		
 		//on player disconnect
