@@ -43,7 +43,7 @@
 			player.targetPosition.y = data.y;
 			player.targetPosition.z = data.z;
 			
-			socket.broadcast.emit('move', data);
+			socket.broadcast.emit('move', player);
 		});
 		
 		socket.on('updatePosition', function(data){
@@ -58,6 +58,13 @@
 			console.log('Follow request: ' + JSON.stringify(data));
 			
 			socket.broadcast.emit('follow', data);
+		});
+		
+		socket.on('attack', function(data){
+			console.log('attack request: ', data);
+			data.id = clientId;
+			
+			io.emit('attack', data);
 		});
 		
 		//on player disconnect
