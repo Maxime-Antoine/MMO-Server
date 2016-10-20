@@ -49,7 +49,7 @@
 		socket.on('updatePosition', function(data){
 			data.id = clientId;
 			console.log('Update position: ' + JSON.stringify(data));
-			
+
 			socket.broadcast.emit('updatePosition', data);
 		});
 		
