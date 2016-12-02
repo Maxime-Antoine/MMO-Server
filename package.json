@@ -8,13 +8,12 @@
   },
   "dependencies": {
     "express": "^4.13.4",
-    "shortid": "^2.2.6",
     "socket.io": "^1.4.6"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start": "node app"
+    "start": "node app"
   },
   "author": "Maxime Antoine",
   "license": "ISC"

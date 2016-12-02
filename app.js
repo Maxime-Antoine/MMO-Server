@@ -10,7 +10,7 @@
 		console.log('client connected - required registration');
 		socket.emit('register');
 		
-		socket.on('onRegister', function(data){
+		socket.on('registering', function(data){
 			//create player obj
 			var clientId = data.playerId;
 			var player = {
