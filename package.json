@@ -1,6 +1,10 @@
 {
   "name": "mmo-server",
   "version": "1.0.0",
+  "engines": {
+    "node": "^7.2.1",
+    "npm": "^3.10.10"
+  },
   "description": "Backend for demo MMO project",
   "main": "app.js",
   "engines": {
