@@ -48,6 +48,18 @@
 				
 				socket.broadcast.emit('move', player);
 			});
+
+			socket.on('iddlePosition', function(data){
+				data.id = clientId;
+				console.log('client iddle at: ' + JSON.stringify(data));
+
+				//updatePosition
+				player.targetPosition.x = data.x;
+				player.targetPosition.y = data.y;
+				player.targetPosition.z = data.z;
+
+				socket.broadcast.emit('iddlePosition', player);
+			});
 			
 			socket.on('updatePosition', function(data){
 				data.id = clientId;
