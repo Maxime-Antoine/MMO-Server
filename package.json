@@ -7,9 +7,6 @@
   },
   "description": "Backend for demo MMO project",
   "main": "app.js",
-  "engines": {
-    "node": "6.7.0"
-  },
   "dependencies": {
     "express": "^4.13.4",
     "socket.io": "^1.4.6"
