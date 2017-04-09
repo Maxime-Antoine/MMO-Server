@@ -1,19 +1,25 @@
 (function(){
 	var io = require('socket.io')(process.env.PORT || 3000);
-	
-	console.log('server started');
+	var firebase = require('firebase');
+
+	firebase.initializeApp({
+		databaseURL: 'https://mmof-f9dec.firebaseio.com',
+		serviceAccount: 'MMOF-0179c0b56559.json'
+	});
+
+	console.log('Server started on port ' + (process.env.PORT || 3000));
 	
 	var players = [];
 	
-	io.on('connection', function(socket){
+	io.on('connection', (socket) => {
 		//require registration (playerId)
 		console.log('client connected - required registration');
 		socket.emit('register');
 		
-		socket.on('registering', function(data){
+		socket.on('registering', (data) => {
 			//create player obj
-			var clientId = data.playerId;
-			var player = {
+			let clientId = data.playerId;
+			let player = {
 				id: clientId,
 				targetPosition: {
 					x: 0, y: 0, z: 0
@@ -29,7 +35,7 @@
 			socket.broadcast.emit('requestPosition');
 			
 			//emit spawn for each connected player
-			for (var playerId in players){
+			for (let playerId in players){
 				if (playerId != clientId) {
 					socket.emit('spawn', players[playerId]);
 					console.log('sending spawn new player for id: ' + playerId);
@@ -37,7 +43,7 @@
 			}
 			
 			//---------------------------- event handlers ------------------------------------
-			socket.on('move', function(data){
+			socket.on('move', (data) => {
 				data.id = clientId;
 				console.log('client moving to: ' + JSON.stringify(data));
 				
@@ -45,11 +51,19 @@
 				player.targetPosition.x = data.x;
 				player.targetPosition.y = data.y;
 				player.targetPosition.z = data.z;
-				
+
+				firebase().database()
+						  .ref('/characters/' + clientId + '/location/coordinates')
+						  .set({
+							  x: player.targetPosition.x,
+							  y: player.targetPosition.y,
+							  z: player.targetPosition.z
+						  });
+
 				socket.broadcast.emit('move', player);
 			});
 
-			socket.on('iddlePosition', function(data){
+			socket.on('iddlePosition', (data) => {
 				data.id = clientId;
 				console.log('client iddle at: ' + JSON.stringify(data));
 
@@ -58,24 +72,32 @@
 				player.targetPosition.y = data.y;
 				player.targetPosition.z = data.z;
 
+				firebase().database()
+						  .ref('/characters/' + clientId + '/location/coordinates')
+						  .set({
+							  x: player.targetPosition.x,
+							  y: player.targetPosition.y,
+							  z: player.targetPosition.z
+						  });
+
 				socket.broadcast.emit('iddlePosition', player);
 			});
 			
-			socket.on('updatePosition', function(data){
+			socket.on('updatePosition', (data) => {
 				data.id = clientId;
 				console.log('Update position: ' + JSON.stringify(data));
 
 				socket.broadcast.emit('updatePosition', data);
 			});
 			
-			socket.on('follow', function(data){
+			socket.on('follow', (data) => {
 				data.id = clientId;
 				console.log('Follow request: ' + JSON.stringify(data));
 				
 				socket.broadcast.emit('follow', data);
 			});
 			
-			socket.on('attack', function(data){
+			socket.on('attack', (data) => {
 				console.log('attack request: ', data);
 				data.id = clientId;
 				
@@ -83,12 +105,12 @@
 			});
 			
 			//on player disconnect
-			socket.on('disconnect', function(){
+			socket.on('disconnect', () => {
 				console.log('client disconnected - id: ' + clientId);
 				delete players[clientId];
 				
 				socket.broadcast.emit('clientDisconnected', { id: clientId });
 			});
-			});
+		});
 	});
 })();
