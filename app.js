@@ -31,9 +31,23 @@
 			//emit spawn and request position to all other connected players
 			console.log('client registered with id: ' + clientId + ' - broadcasting spawn');
 
-			socket.broadcast.emit('spawn', player);
-			socket.broadcast.emit('requestPosition');
-			
+			//retrieve character saved location and spawn
+			firebase.database()
+					.ref('/characters/' + clientId + '/location/coordinates')
+					.once("value", (snapshot) => {
+						let data = snapshot.val();
+						if (data){
+							player.targetPosition.x = data.x;
+							player.targetPosition.y = data.y;
+							player.targetPosition.z = data.z;
+							console.log('send iddle position at x:' + data.x + ' y:' + data.y + ' z:' + data.z);
+							socket.emit('iddlePosition', player);
+						}
+
+						socket.broadcast.emit('spawn', player);
+						socket.broadcast.emit('requestPosition');
+					});
+
 			//emit spawn for each connected player
 			for (let playerId in players){
 				if (playerId != clientId) {
@@ -52,7 +66,7 @@
 				player.targetPosition.y = data.y;
 				player.targetPosition.z = data.z;
 
-				firebase().database()
+				firebase.database()
 						  .ref('/characters/' + clientId + '/location/coordinates')
 						  .set({
 							  x: player.targetPosition.x,
@@ -72,7 +86,7 @@
 				player.targetPosition.y = data.y;
 				player.targetPosition.z = data.z;
 
-				firebase().database()
+				firebase.database()
 						  .ref('/characters/' + clientId + '/location/coordinates')
 						  .set({
 							  x: player.targetPosition.x,
