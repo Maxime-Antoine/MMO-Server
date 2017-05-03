@@ -7,6 +7,10 @@
   },
   "description": "Backend for demo MMO project",
   "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maxime-Antoine/MMOF-Server.git"
+  },
   "dependencies": {
     "express": "^4.13.4",
     "firebase": "^3.7.5",
