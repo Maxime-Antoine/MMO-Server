@@ -1,11 +1,12 @@
 'use strict';
 
 const io = require('socket.io')(process.env.PORT || 3000);
-const firebase = require('firebase');
+const firebase = require('firebase-admin');
+const firebaseCertificate = require('./MMOF-0179c0b56559');
 
 firebase.initializeApp({
     databaseURL: 'https://mmof-f9dec.firebaseio.com',
-    serviceAccount: 'MMOF-0179c0b56559.json'
+    credential: firebase.credential.cert(firebaseCertificate)
 });
 
 console.log('Server started on port ' + (process.env.PORT || 3000));
