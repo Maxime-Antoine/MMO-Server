@@ -1,6 +1,6 @@
 'use strict';
 
-const io = require('socket.io')(process.env.PORT || 3000);
+const io = require('socket.io')(process.env.PORT || 3001);
 const firebase = require('firebase-admin');
 const firebaseCertificate = require('./MMOF-0179c0b56559');
 
@@ -9,7 +9,7 @@ firebase.initializeApp({
     credential: firebase.credential.cert(firebaseCertificate)
 });
 
-console.log('Server started on port ' + (process.env.PORT || 3000));
+console.log('Server started on port ' + (process.env.PORT || 3001));
 
 const players = [];
 
