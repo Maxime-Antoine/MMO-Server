@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
 
 					socket.broadcast.emit('spawn', player);
 					socket.broadcast.emit('requestPosition');
-				);
+				});
 
 		//emit spawn for each connected player
         for (let playerId in players){
