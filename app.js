@@ -37,18 +37,18 @@ io.on('connection', (socket) => {
         firebase.database()
 				.ref('/characters/' + clientId + '/location/coordinates')
 				.once('value', (snapshot) => {
-    let data = snapshot.val();
-    if (data){
-        player.targetPosition.x = data.x;
-        player.targetPosition.y = data.y;
-        player.targetPosition.z = data.z;
-        console.log('send iddle position at x:' + data.x + ' y:' + data.y + ' z:' + data.z);
-        socket.emit('iddlePosition', player);
-    }
+					let data = snapshot.val();
+					if (data){
+						player.targetPosition.x = data.x;
+						player.targetPosition.y = data.y;
+						player.targetPosition.z = data.z;
+						console.log('send iddle position at x:' + data.x + ' y:' + data.y + ' z:' + data.z);
+						socket.emit('iddlePosition', player);
+					}
 
-    socket.broadcast.emit('spawn', player);
-    socket.broadcast.emit('requestPosition');
-});
+					socket.broadcast.emit('spawn', player);
+					socket.broadcast.emit('requestPosition');
+				);
 
 		//emit spawn for each connected player
         for (let playerId in players){
@@ -69,12 +69,12 @@ io.on('connection', (socket) => {
             player.targetPosition.z = data.z;
 
             firebase.database()
-						.ref('/characters/' + clientId + '/location/coordinates')
-						.set({
-    x: player.targetPosition.x,
-    y: player.targetPosition.y,
-    z: player.targetPosition.z
-});
+					.ref('/characters/' + clientId + '/location/coordinates')
+					.set({
+						x: player.targetPosition.x,
+						y: player.targetPosition.y,
+						z: player.targetPosition.z
+					});
 
             socket.broadcast.emit('move', player);
         });
@@ -89,12 +89,12 @@ io.on('connection', (socket) => {
             player.targetPosition.z = data.z;
 
             firebase.database()
-						.ref('/characters/' + clientId + '/location/coordinates')
-						.set({
-    							x: player.targetPosition.x,
-    							y: player.targetPosition.y,
-    							z: player.targetPosition.z
-});
+					.ref('/characters/' + clientId + '/location/coordinates')
+					.set({
+							x: player.targetPosition.x,
+							y: player.targetPosition.y,
+							z: player.targetPosition.z
+					});
 
             socket.broadcast.emit('iddlePosition', player);
         });
